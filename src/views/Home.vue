@@ -1,8 +1,14 @@
 <template>
   <div id="app">
     <AddTodo v-on:add-todo="addTodo" />
-    <Todos v-bind:todos="todos" @del-todo="deleteTodo" />
-    
+    <div class="pagination">
+      <a href="#" v-if="page != 1" @click="page--">Previous</a>
+      <a href="#" >{{ page }}</a>
+      <a href="#" @click="page++" v-if="page < todos.length">Next</a>
+
+    </div>
+    <Todos v-bind:todos="todos" @del-todo="deleteTodo" @del-comment="deleteComment" @add-comment="addComment"/>
+
     <!-- <Todos v-bind:todos="todos"/> -->
   </div>
 </template>
@@ -20,18 +26,70 @@ export default {
   },
   data() {
     return {
-      todos: []
+      todos: [],
+      todoLen: '',
+      page: 1,
+			perPage: 20,
+      start: 0,
+      end: 4,
     }
   },
   mounted() {
     this.getAllTodo();
   },
+  filters: {
+		paginate: function(array, start, end) {
+			return array.slice(start, end);
+    }
+  },
   methods: {
     // eslint-disable-next-line
     /* eslint-disable */
-      
+    paginate: function(direction) {
+			if(direction === 'moveRight') 
+      {
+        if(this.end >= this.images.length) {
+          this.start = this.start
+          this.end = this.images.length
+        } else {
+				    this.start += 1;
+				    this.end += 1;          
+        }
+			}
+			else if(direction === 'previous') {
+        if(this.start <= 0) {
+          this.start = 0;
+          this.end = 4;
+        } else {
+				    this.start -= 1;
+				    this.end -= 1;
+        }
+			}
+		},
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.guid !== id);
+    },
+
+    nextPage(pge) {
+      alert(pge);
+      this.page += 1;
+      // if(page != pge) {
+
+      // }
+    },
+
+    deleteComment(id, idx) {
+      console.log("todoComment data", id, idx); // check todos id and comment index
+      let tmp = this.todos.filter(todo => todo.guid === id);
+      let cmmnt = tmp[0].comments;
+      let rem = cmmnt.splice(idx, 1); // remove comment
+    },
+
+    addComment(comment, tId) {
+      console.log("check new comment", comment);
+      let tmp = this.todos.filter(todo => todo.guid === tId);
+      let cmmnt = tmp[0].comments;
+      let add = cmmnt.unshift(comment);
     },
 
     addTodo(newTodo) {
@@ -44,8 +102,10 @@ export default {
         const response = await axios.get('https://atillc.blob.core.windows.net/data-collector/icode/test-data/topics.json')
         .then((response) => {
           this.todos = response.data.topics; 
+          this.todoLen = response.data.topics.length;
+          this.todos.length = 20;
           
-          console.log("check todo", this.todos);
+          console.log("check todo len", this.todoLen);
         })
       } catch(error) {
           console.log("err", error);
@@ -74,6 +134,7 @@ export default {
   body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.4;
+    padding:100px 300px 0 300px;
   }
 
   .btn {
@@ -88,4 +149,16 @@ export default {
   .btn:hover {
     background: #666;
   }
+
+  .pagination {
+    display: inline-block;
+  }
+
+  .pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+
 </style>
