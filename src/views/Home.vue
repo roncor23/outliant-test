@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <AddTodo v-on:add-todo="addTodo" />
-    <Todos v-bind:todos="todos" v-on:del-todo="deleteTodo" />
+    <Todos v-bind:todos="todos" @del-todo="deleteTodo" />
+    
+    <!-- <Todos v-bind:todos="todos"/> -->
   </div>
 </template>
 
@@ -21,28 +23,44 @@ export default {
       todos: []
     }
   },
+  mounted() {
+    this.getAllTodo();
+  },
   methods: {
+    // eslint-disable-next-line
+    /* eslint-disable */
+      
     deleteTodo(id) {
-      axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
-        .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
-        .catch(err => console.log(err));
+      this.todos = this.todos.filter(todo => todo.guid !== id);
     },
-    addTodo(newTodo) {
-      const { title, completed } = newTodo;
 
-      axios.post('https://jsonplaceholder.typicode.com/todos', {
-        title,
-        completed
-      })
-        .then(res => this.todos = [...this.todos, res.data])
-        .catch(err => console.log(err));
+    addTodo(newTodo) {
+      console.log("add todo", newTodo);
+      this.todos.unshift(newTodo);
+    },
+
+    async getAllTodo() {
+      try {
+        const response = await axios.get('https://atillc.blob.core.windows.net/data-collector/icode/test-data/topics.json')
+        .then((response) => {
+          this.todos = response.data.topics; 
+          
+          console.log("check todo", this.todos);
+        })
+      } catch(error) {
+          console.log("err", error);
+          alert('Something went wrong!');
+      }
     }
   },
-  created() {
-    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5')
-      .then(res => this.todos = res.data)
-      .catch(err => console.log(err));
-  }
+  // created() {
+  //   // axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5')
+  //   axios.get('https://atillc.blob.core.windows.net/data-collector/icode/test-data/topics.json')
+  //     .then(res =>
+  //      this.todos = res.data
+  //      )
+  //     .catch(err => console.log(err));
+  // }
 }
 </script>
 

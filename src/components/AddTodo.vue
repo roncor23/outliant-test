@@ -19,8 +19,9 @@ export default {
   methods: {
     addTodo() {
       const newTodo = {
-        title: this.title,
-        completed: false
+        comments: [],
+        guid: 'asd234',
+        name: this.title
       }
       // Send up to parent
       this.$emit('add-todo', newTodo);
