@@ -20,12 +20,12 @@
                 </thead>
                 <tbody>
                     <tr v-for="(product, index) in filteredProducts" :key="index">
-                        <td v-if="!flagUpdate">{{ product.name }}</td>
-                        <td v-if="flagUpdate"><input v-model="product.name" class="form-control" @change="updateProduct(index, product)"/></td>
-                        <td v-if="!flagUpdate">{{ product.price }}</td>
-                        <td v-if="flagUpdate"><input v-model="product.price" class="form-control" @change="updateProduct(index, product)"></td>
+                        <td>{{ product.name }}</td>
+                        <!-- <td v-if="flagUpdate"><input v-model="product.name" class="form-control" @change="updateProduct(index, product)"/></td> -->
+                        <td>{{ product.price }}</td>
+                        <!-- <td v-if="flagUpdate"><input v-model="product.price" class="form-control" @change="updateProduct(index, product)"></td> -->
                         <td>                            
-                            <button type="button" class="btn btn-dark" @click="update(product.id)">Edit</button>
+                            <button type="button" class="btn btn-dark" @click="updateProduct(index, product, true)">Edit</button>
                             <button type="button" class="btn btn-outline-dark" @click="deleteProduct(product.id)">Delete</button>
                         </td>
                     </tr>
@@ -43,7 +43,6 @@ export default {
   data() {
     return {
         search: '',
-        flagUpdate: false
     }
   },
     computed: {
@@ -64,12 +63,10 @@ export default {
         this.$emit('delete', pId);
     },
     update() {
-        this.flagUpdate = true;
     },
-    updateProduct(Idx, product) {
+    updateProduct(Idx, product, flag) {
 
-        this.$emit('update', Idx, product);
-        this.flagUpdate = false;
+        this.$emit('update', Idx, product, flag);
     }
 
 
