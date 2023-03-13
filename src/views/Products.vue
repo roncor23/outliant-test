@@ -122,16 +122,15 @@ export default {
   methods: {
     /* eslint-disable */ 
     submit() {
-        this.$emit('submit', this.product = {
+
+      this.product = {
             'id': Math.floor(Math.random() * 100),
             'name': this.product.name,
             'price': this.product.price
-        });
-        this.product = {};
-    },
-    submitProduct(e) {
-      this.products.push(e); // add new product
-      console.log("check product to be submitted", e);
+        }
+
+      this.products.push(this.product); // add new product
+      this.product = {}; // reset products
     },
     deleteProduct(pId) {
       this.products = this.products.filter((product) => product.id != pId);
