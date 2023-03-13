@@ -1,5 +1,4 @@
-# Vue Crash Course (TodoList)
-## Quick Start
+
 
 ```bash
 # Install dependencies
